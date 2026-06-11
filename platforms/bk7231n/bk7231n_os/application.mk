@@ -1111,10 +1111,69 @@ TY_OUTPUT = $(TOP_DIR)/apps/$(APP_BIN_NAME)/output/$(APP_VERSION)
 TY_SRC_DIRS += $(shell find $(TOP_DIR)/apps/$(APP_BIN_NAME)/src -type d)
 TY_SRC_DIRS += $(shell find ../tuya_os_adapter/src -type d)
 
+ifeq ($(CFG_MINIMAL_RELAY),1)
+TY_SRC_DIRS := $(filter-out \
+	$(TOP_DIR)/apps/$(APP_BIN_NAME)/src/berry% \
+	$(TOP_DIR)/apps/$(APP_BIN_NAME)/src/bitmessage% \
+	$(TOP_DIR)/apps/$(APP_BIN_NAME)/src/devicegroups% \
+	$(TOP_DIR)/apps/$(APP_BIN_NAME)/src/i2c% \
+	$(TOP_DIR)/apps/$(APP_BIN_NAME)/src/libraries/Arduino-IRremote-mod% \
+	$(TOP_DIR)/apps/$(APP_BIN_NAME)/src/libraries/IRremoteESP8266% \
+	$(TOP_DIR)/apps/$(APP_BIN_NAME)/src/libraries/rc-switch% \
+	$(TOP_DIR)/apps/$(APP_BIN_NAME)/src/memory% \
+	$(TOP_DIR)/apps/$(APP_BIN_NAME)/src/selftest% \
+	$(TOP_DIR)/apps/$(APP_BIN_NAME)/src/sim% \
+	$(TOP_DIR)/apps/$(APP_BIN_NAME)/src/win32%, \
+	$(TY_SRC_DIRS))
+endif
+
 SRC_C += $(foreach dir, $(TY_SRC_DIRS), $(wildcard $(dir)/*.c)) # need export
 SRC_C += $(foreach dir, $(TY_SRC_DIRS), $(wildcard $(dir)/*.s)) 
 SRC_C += $(foreach dir, $(TY_SRC_DIRS), $(wildcard $(dir)/*.S)) 
 SRC_CPP += $(foreach dir, $(TY_SRC_DIRS), $(wildcard $(dir)/*.cpp)) 
+
+ifeq ($(CFG_MINIMAL_RELAY),1)
+MINIMAL_APP := $(TOP_DIR)/apps/$(APP_BIN_NAME)/src
+MINIMAL_DRIVER_C := \
+	$(MINIMAL_APP)/driver/drv_debouncer.c \
+	$(MINIMAL_APP)/driver/drv_deviceclock.c \
+	$(MINIMAL_APP)/driver/drv_doorSensorWithDeepSleep.c \
+	$(MINIMAL_APP)/driver/drv_httpButtons.c \
+	$(MINIMAL_APP)/driver/drv_main.c \
+	$(MINIMAL_APP)/driver/drv_pwmToggler.c \
+	$(MINIMAL_APP)/driver/drv_soft_i2c.c \
+	$(MINIMAL_APP)/driver/drv_timed_events.c \
+	$(MINIMAL_APP)/driver/drv_uart.c
+MINIMAL_HAL_C := \
+	$(MINIMAL_APP)/hal/bk7231/hal_adc_bk7231.c \
+	$(MINIMAL_APP)/hal/bk7231/hal_flashConfig_bk7231.c \
+	$(MINIMAL_APP)/hal/bk7231/hal_flashVars_bk7231.c \
+	$(MINIMAL_APP)/hal/bk7231/hal_generic_bk7231.c \
+	$(MINIMAL_APP)/hal/bk7231/hal_hwtimer_bk7231.c \
+	$(MINIMAL_APP)/hal/bk7231/hal_main_bk7231.c \
+	$(MINIMAL_APP)/hal/bk7231/hal_ota_bk7231.c \
+	$(MINIMAL_APP)/hal/bk7231/hal_pins_bk7231.c \
+	$(MINIMAL_APP)/hal/bk7231/hal_uart_bk7231.c \
+	$(MINIMAL_APP)/hal/bk7231/hal_wifi_bk7231.c \
+	$(MINIMAL_APP)/hal/generic/hal_adc_generic.c \
+	$(MINIMAL_APP)/hal/generic/hal_flashConfig_generic.c \
+	$(MINIMAL_APP)/hal/generic/hal_flashVars_generic.c \
+	$(MINIMAL_APP)/hal/generic/hal_generic.c \
+	$(MINIMAL_APP)/hal/generic/hal_hwtimer_generic.c \
+	$(MINIMAL_APP)/hal/generic/hal_ota_generic.c \
+	$(MINIMAL_APP)/hal/generic/hal_pins_generic.c \
+	$(MINIMAL_APP)/hal/generic/hal_uart_generic.c \
+	$(MINIMAL_APP)/hal/generic/hal_wifi_generic.c
+SRC_C := $(filter-out \
+	$(MINIMAL_APP)/debug_tuyaMCUsimulator.c \
+	$(MINIMAL_APP)/win_main.c \
+	$(MINIMAL_APP)/win_main_scriptOnly.c \
+	$(MINIMAL_APP)/win_stubs.c \
+	$(MINIMAL_APP)/driver/% \
+	$(MINIMAL_APP)/hal/%, \
+	$(SRC_C)) $(MINIMAL_DRIVER_C) $(MINIMAL_HAL_C)
+SRC_CPP :=
+endif
 
 TY_INC_DIRS += $(shell find $(TOP_DIR)/sdk/include -type d)
 #SDK_INCLUDE_DIRS := $(shell find $(TOP_DIR)/sdk -name include -type d)
