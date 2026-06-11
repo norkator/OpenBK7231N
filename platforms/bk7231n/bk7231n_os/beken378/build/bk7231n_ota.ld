@@ -31,8 +31,8 @@
 MEMORY
 {
         flash  (rx) : ORIGIN = 0x00010000, LENGTH = 2M - 64k
-        tcm   (rw!x): ORIGIN = 0x003F0000, LENGTH = 60k - 512
-        itcm   (rwx): ORIGIN = 0X003FEE00, LENGTH = 4608
+        tcm   (rw!x): ORIGIN = 0x003F0000, LENGTH = 60k - 256
+        itcm   (rwx): ORIGIN = 0X003FEF00, LENGTH = 4352
         ram   (rw!x): ORIGIN = 0x00400100, LENGTH = 192k - 0x100
 }
 
