@@ -1133,15 +1133,19 @@ SRC_C += $(foreach dir, $(TY_SRC_DIRS), $(wildcard $(dir)/*.S))
 SRC_CPP += $(foreach dir, $(TY_SRC_DIRS), $(wildcard $(dir)/*.cpp)) 
 
 ifeq ($(CFG_MINIMAL_RELAY),1)
-MINIMAL_APP := $(TOP_DIR)/apps/$(APP_BIN_NAME)/src
-MINIMAL_DRIVER_C := \
-	$(MINIMAL_APP)/driver/drv_debouncer.c \
-	$(MINIMAL_APP)/driver/drv_deviceclock.c \
-	$(MINIMAL_APP)/driver/drv_doorSensorWithDeepSleep.c \
-	$(MINIMAL_APP)/driver/drv_httpButtons.c \
-	$(MINIMAL_APP)/driver/drv_main.c \
-	$(MINIMAL_APP)/driver/drv_pwmToggler.c \
-	$(MINIMAL_APP)/driver/drv_soft_i2c.c \
+	MINIMAL_APP := $(TOP_DIR)/apps/$(APP_BIN_NAME)/src
+	MINIMAL_DRIVER_C := \
+		$(MINIMAL_APP)/driver/drv_bl0942.c \
+		$(MINIMAL_APP)/driver/drv_bl_shared.c \
+		$(MINIMAL_APP)/driver/drv_bridge_driver.c \
+		$(MINIMAL_APP)/driver/drv_debouncer.c \
+		$(MINIMAL_APP)/driver/drv_deviceclock.c \
+		$(MINIMAL_APP)/driver/drv_doorSensorWithDeepSleep.c \
+		$(MINIMAL_APP)/driver/drv_httpButtons.c \
+		$(MINIMAL_APP)/driver/drv_main.c \
+		$(MINIMAL_APP)/driver/drv_pwrCal.c \
+		$(MINIMAL_APP)/driver/drv_pwmToggler.c \
+		$(MINIMAL_APP)/driver/drv_soft_i2c.c \
 	$(MINIMAL_APP)/driver/drv_timed_events.c \
 	$(MINIMAL_APP)/driver/drv_uart.c
 MINIMAL_HAL_C := \
@@ -1296,6 +1300,8 @@ endif # COMPONENTS_LIB
 	rm -f $(SRC_S_O)
 	rm -f $(SRC_OS_O)
 	rm -f $(SRC_CPP_O)
+	rm -f ./beken378/func/lwip_intf/lwip-2.1.3/src/apps/altcp_tls/altcp_tls_mbedtls.o
+	rm -f ./beken378/func/lwip_intf/lwip-2.1.3/src/apps/altcp_tls/altcp_tls_mbedtls_mem.o
 	rm -rf $(TY_OBJS)
 	rm -f $(TY_IOT_LIB)
 	rm -rf $(TY_OUTPUT)
